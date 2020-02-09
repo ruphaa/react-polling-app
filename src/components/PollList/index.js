@@ -28,7 +28,7 @@ const App = () => {
       ]
     }
   ];
-  const defaultPoll = JSON.parse(window.localStorage.getItem("polls") || poll1);
+  const defaultPoll = JSON.parse(window.localStorage.getItem("polls")) || poll1;
 
   const [polls, setPolls] = useState(defaultPoll);
 
