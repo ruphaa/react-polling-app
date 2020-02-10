@@ -15,7 +15,7 @@ const customStyles = {
     minHeight: "200px"
   }
 };
-const App = ({ poll, incrementPollCount }) => {
+const App = ({ poll, incrementPollCount, deletePoll }) => {
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const { authenticated, setAuthenticated } = useContext(RootContext);
@@ -34,7 +34,7 @@ const App = ({ poll, incrementPollCount }) => {
       {authenticated ? (
         <div className="btn-action">
           <button onClick={() => console.log("Edit")}>Edit</button>
-          <button onClick={() => console.log("Delete")}>Delete</button>
+          <button onClick={() => deletePoll(poll.id)}>Delete</button>
           <button onClick={() => console.log("Close the poll")}>
             Close Poll
           </button>
