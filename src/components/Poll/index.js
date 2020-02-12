@@ -1,36 +1,27 @@
 import React, { useState, useContext } from "react";
 import PollDetails from "../PollDetails";
-import ReactModal from "react-modal";
 import { RootContext } from "../RootContext.js";
+import { Modal, Button } from "antd";
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    width: "700px",
-    minHeight: "200px"
-  }
-};
 const App = ({ poll, incrementPollCount, deletePoll }) => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-
   const { authenticated, setAuthenticated } = useContext(RootContext);
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
-  function openModal() {
-    setIsOpen(true);
-  }
-  function afterOpenModal() {}
-  function closeModal() {
-    setIsOpen(false);
-  }
+  const showModal = () => setVisible(true);
+  const closeModal = () => setVisible(false);
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(true);
+      setVisible(false);
+    }, 3000);
+  };
+
   return (
     <li className="poll" key={poll.id}>
       <h3>{poll.title}</h3>
-      <button onClick={openModal}>Vote</button>
+      <button onClick={showModal}>Vote</button>
       {authenticated ? (
         <div className="btn-action">
           <button onClick={() => console.log("Edit")}>Edit</button>
@@ -42,17 +33,16 @@ const App = ({ poll, incrementPollCount, deletePoll }) => {
       ) : (
         ""
       )}
-
-      <ReactModal
-        contentLabel="Minimal Modal Example"
-        style={customStyles}
-        onRequestClose={closeModal}
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
+      <Modal
+        visible={visible}
+        contentLabel="Vote the poll"
+        onOk={handleOk}
+        onCancel={closeModal}
+        destroyOnClose={true}
+        footer={[]}
       >
         <PollDetails poll={poll} incrementPollCount={incrementPollCount} />
-        <button onClick={closeModal}>Close Modal</button>
-      </ReactModal>
+      </Modal>
     </li>
   );
 };

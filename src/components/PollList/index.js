@@ -1,25 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
 import Poll from "../Poll";
 import { RootContext } from "../RootContext.js";
-import ReactModal from "react-modal";
+import { Modal, Button } from "antd";
 import Login from "../Login";
+import { Layout } from "antd";
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    width: "700px",
-    minHeight: "200px"
-  }
-};
+const { Header, Footer, Sider, Content } = Layout;
 
 const App = () => {
+  // States
   const { authenticated, setAuthenticated } = useContext(RootContext);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const closeModal = () => setVisible(false);
+  const handleOk = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(true);
+      setVisible(false);
+    }, 3000);
+  };
 
   const poll1 = [
     {
@@ -64,14 +66,6 @@ const App = () => {
 
   const [polls, setPolls] = useState(defaultPoll);
 
-  function openModal() {
-    setIsOpen(true);
-  }
-  function afterOpenModal() {}
-  function closeModal() {
-    setIsOpen(false);
-  }
-
   useEffect(() => {
     window.localStorage.setItem("polls", JSON.stringify(polls));
   });
@@ -86,37 +80,53 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <h2>Voting app</h2>
-      {authenticated ? (
-        <React.Fragment>
-          <button onClick={() => setAuthenticated(false)}>Logout</button>
-          <button onClick={() => console.log("Add a poll")}>
-            Create a Poll
-          </button>
-        </React.Fragment>
-      ) : (
-        <button onClick={openModal}>Login</button>
-      )}
+      <Layout>
+        <Header>Voting app</Header>
+        <Content>
+          {authenticated ? (
+            <React.Fragment>
+              <button onClick={() => setAuthenticated(false)}>Logout</button>
+              <button onClick={() => console.log("Add a poll")}>
+                Create a Poll
+              </button>
+            </React.Fragment>
+          ) : (
+            <button onClick={showModal}>Login</button>
+          )}
 
-      <ul className="poll-list">
-        {polls.map(poll => (
-          <Poll
-            poll={poll}
-            incrementPollCount={incrementPollCount}
-            deletePoll={deletePoll}
-          />
-        ))}
-      </ul>
-      <ReactModal
-        contentLabel="Minimal Modal Example"
-        style={customStyles}
-        onRequestClose={closeModal}
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
-      >
-        <Login closeModal={closeModal} />
-        <button onClick={closeModal}>Close Modal</button>
-      </ReactModal>
+          <ul className="poll-list">
+            {polls.map(poll => (
+              <Poll
+                poll={poll}
+                incrementPollCount={incrementPollCount}
+                deletePoll={deletePoll}
+              />
+            ))}
+          </ul>
+          <Modal
+            visible={visible}
+            contentLabel="Login"
+            onOk={handleOk}
+            onCancel={closeModal}
+            footer={[
+              <Button key="back" onClick={closeModal}>
+                Return
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                loading={loading}
+                onClick={handleOk}
+              >
+                Return
+              </Button>
+            ]}
+          >
+            <Login closeModal={closeModal} />
+            <button onClick={closeModal}>Close Modal</button>
+          </Modal>
+        </Content>
+      </Layout>
     </React.Fragment>
   );
 };
