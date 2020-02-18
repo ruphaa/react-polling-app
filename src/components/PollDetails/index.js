@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import ProgressBar from "../ProgressBar";
+import "./style.css";
 
 const App = ({ poll, incrementPollCount }) => {
   const [showProgress, setShowProgress] = useState(false);
@@ -23,7 +24,6 @@ const App = ({ poll, incrementPollCount }) => {
               <span data-id={choice.position} onClick={incrementCounter}>
                 {choice.value}
               </span>
-              <span>Count - {choice.count}</span>
             </li>
           ))}
         </ul>

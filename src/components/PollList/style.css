@@ -1,0 +1,19 @@
+.ant-layout {
+  max-width: 1250px;
+  margin: 0 auto;
+}
+.ant-layout-header {
+  display: flex;
+}
+.heading {
+  flex: 1;
+}
+.btn-primary {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.ant-layout-content {
+  background-color: #fff;
+}

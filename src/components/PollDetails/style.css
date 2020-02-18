@@ -1,0 +1,16 @@
+.poll-wrapper .choices {
+  list-style: none;
+  padding-left: 0;
+}
+.poll-wrapper .choices li {
+  height: 40px;
+  background: #d9ecfe;
+  border-radius: 5px;
+  /* text-align: center; */
+  /* margin: 0 auto; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}

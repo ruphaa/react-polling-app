@@ -1,0 +1,11 @@
+.poll-list {
+  margin-top: 15px;
+}
+
+.poll {
+  height: 70px;
+  display: flex;
+}
+.poll h3 {
+  flex: 1;
+}

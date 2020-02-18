@@ -1,0 +1,13 @@
+.login-wrapper input {
+  border: 1px solid #dadddf;
+  border-radius: 4px;
+  width: 200px;
+}
+.login-wrapper label {
+  width: 150px;
+  display: inline-block;
+}
+
+.field {
+  margin-top: 15px;
+}

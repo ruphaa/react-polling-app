@@ -1,14 +1,7 @@
 .stat-levels {
-  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.5);
-  border: 1px solid #494a4e;
   border-radius: 10px;
-  background: -webkit-linear-gradient(bottom, #444549 0%, #343539 100%);
-  background: linear-gradient(#444549 0%, #343539 100%);
 }
 .stat-bar {
-  background-color: #2a2b2f;
-  box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.6);
-  height: 12px;
   overflow: hidden;
   padding: 3px;
   border-radius: 5px;
@@ -22,17 +15,13 @@
   border-radius: 4px;
   float: left;
   width: 0;
-  height: 100%;
+  height: 8px;
   font-size: 12px;
   color: white;
   text-align: center;
   text-indent: -9999px;
   background-color: #428bca;
-  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  /* width: 0; */
-  /* visibility: hidden; */
-  /* animation: animate-width; */
+  animation: animate-width;
   transition: 0.3s width linear;
 }
 

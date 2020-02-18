@@ -7,14 +7,15 @@ const App = ({ poll }) => {
     <div className="stat-levels">
       {poll.choices.map(choice => (
         <div className="stat-1 stat-bar">
-          {/* <span>{choice.value}</span> */}
+          <div>
+            {choice.value} - {choice.count}
+          </div>
+
           <span
             className="stat-bar-rating"
             role="stat-bar"
             style={{ width: (choice.count * 100) / total + "%" }}
-          >
-            {choice.count}
-          </span>
+          ></span>
         </div>
       ))}
     </div>

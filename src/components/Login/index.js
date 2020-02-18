@@ -1,25 +1,22 @@
 import React, { useContext } from "react";
 import { RootContext } from "../RootContext";
+import "./style.css";
 
 // Component in progress
 const App = ({ closeModal }) => {
-  const { authenticated, setAuthenticated } = useContext(RootContext);
-  const loginUser = function() {
-    setAuthenticated(true);
-    closeModal();
-  };
+  // const { authenticated, setAuthenticated } = useContext(RootContext);
+
   return (
     <div className="login-wrapper">
       <h2>Login</h2>
-      <div className="username">
+      <div className="field username">
         <label>Enter the user id</label>
         <input type="text" />
       </div>
-      <div className="password">
+      <div className="field password">
         <label>Enter your password</label>
         <input type="text" />
       </div>
-      <button onClick={loginUser}>Submit</button>
     </div>
   );
 };
