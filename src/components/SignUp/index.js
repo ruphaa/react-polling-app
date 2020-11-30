@@ -2,16 +2,16 @@ import React, { useContext, useState } from "react";
 import { RootContext } from "../RootContext";
 import { Button } from "antd";
 
-import "./style.css";
-
 // Component in progress
-const Login = ({ closeModal }) => {
+const App = ({ closeModal }) => {
   const { dispatch } = useContext(RootContext);
   let defaultUser = { username: null, password: null };
+
   const [user, setUser] = useState(defaultUser);
-  const loginUser = function() {
+
+  const createUser = function() {
     dispatch({
-      type: "LOGIN",
+      type: "REGISTER",
       username: user.username,
       password: user.password
     });
@@ -20,7 +20,11 @@ const Login = ({ closeModal }) => {
 
   return (
     <div className="login-wrapper">
-      <h2>Login</h2>
+      <h2>Sign Up</h2>
+      <div className="field name">
+        <label>Enter the name</label>
+        <input type="text" />
+      </div>
       <div className="field username">
         <label>Enter the user id</label>
         <input
@@ -37,12 +41,12 @@ const Login = ({ closeModal }) => {
           onChange={e => setUser({ ...user, password: e.target.value })}
         />
       </div>
-      <div className="btn-action">
+      <div className="btn-actions">
         <Button key="back" onClick={closeModal}>
           Cancel
         </Button>
         ,
-        <Button key="submit" type="primary" onClick={loginUser}>
+        <Button key="submit" type="primary" onClick={createUser}>
           Submit
         </Button>
       </div>
@@ -50,4 +54,4 @@ const Login = ({ closeModal }) => {
   );
 };
 
-export default Login;
+export default App;

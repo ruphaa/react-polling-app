@@ -10,7 +10,6 @@ const App = ({ poll }) => {
           <div>
             {choice.value} - {choice.count}
           </div>
-
           <span
             className="stat-bar-rating"
             role="stat-bar"

@@ -1,49 +1,25 @@
-import React, {
-  useState,
-  useContext,
-  forwardRef,
-  useRef,
-  useImperativeHandle
-} from "react";
+import React, { useState, useContext } from "react";
 import PollDetails from "../PollDetails";
 import ProgressBar from "../ProgressBar";
-import { RootContext } from "../RootContext.js";
+import { RootContext, PollContext } from "../RootContext.js";
 import { Modal, Button } from "antd";
 import "./style.css";
-import PollForm from "../PollForm";
+import Form from "../Form";
 
-const App = ({ poll, incrementPollCount, deletePoll, editPoll, closePoll }) => {
-  const { authenticated, setAuthenticated } = useContext(RootContext);
-  const [loading, setLoading] = useState(false);
+const App = ({ poll }) => {
+  const { dispatch } = useContext(PollContext);
+  const { authenticated } = useContext(RootContext);
+
+  // Local State
   const [visible, setVisible] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
-  const childRef = useRef();
 
+  // Modal Functionalities
   const showEditModal = () => setVisibleEdit(true);
   const closeEditModal = () => setVisibleEdit(false);
 
   const showModal = () => setVisible(true);
   const closeModal = () => setVisible(false);
-  const handleOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(true);
-      setVisible(false);
-    }, 3000);
-  };
-
-  const editPollQA = function() {
-    let updatedPoll = childRef.current.editPoll();
-    // editPoll(id, updatedPoll);
-  };
-
-  const closeSelectedPoll = function() {
-    closePoll(poll.id, { ...poll, closed: true });
-  };
-
-  const openSelectedPoll = function() {
-    closePoll(poll.id, { ...poll, closed: false });
-  };
 
   return (
     <li className="poll" key={poll.id}>
@@ -54,15 +30,36 @@ const App = ({ poll, incrementPollCount, deletePoll, editPoll, closePoll }) => {
             <button className="btn-primary" onClick={showEditModal}>
               Edit
             </button>
-            <button className="btn-primary" onClick={() => deletePoll(poll.id)}>
+            <button
+              className="btn-primary"
+              onClick={() => dispatch({ type: "DELETE_POLL", id: poll.id })}
+            >
               Delete
             </button>
             {poll.closed ? (
-              <button className="btn-primary" onClick={openSelectedPoll}>
+              <button
+                className="btn-primary"
+                onClick={() =>
+                  dispatch({
+                    type: "CLOSE_POLL",
+                    id: poll.id,
+                    updatedPoll: { ...poll, closed: false }
+                  })
+                }
+              >
                 Open Poll
               </button>
             ) : (
-              <button className="btn-primary" onClick={closeSelectedPoll}>
+              <button
+                className="btn-primary"
+                onClick={() =>
+                  dispatch({
+                    type: "CLOSE_POLL",
+                    id: poll.id,
+                    updatedPoll: { ...poll, closed: true }
+                  })
+                }
+              >
                 Close Poll
               </button>
             )}
@@ -78,7 +75,6 @@ const App = ({ poll, incrementPollCount, deletePoll, editPoll, closePoll }) => {
       <Modal
         visible={visible}
         contentLabel="Vote the poll"
-        onOk={handleOk}
         onCancel={closeModal}
         destroyOnClose={true}
         footer={[]}
@@ -86,7 +82,7 @@ const App = ({ poll, incrementPollCount, deletePoll, editPoll, closePoll }) => {
         {poll.closed ? (
           <ProgressBar poll={poll} />
         ) : (
-          <PollDetails poll={poll} incrementPollCount={incrementPollCount} />
+          <PollDetails poll={poll} />
         )}
       </Modal>
       {/* Edit a poll */}
@@ -98,13 +94,10 @@ const App = ({ poll, incrementPollCount, deletePoll, editPoll, closePoll }) => {
         footer={[
           <Button key="back" onClick={closeEditModal}>
             Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={editPollQA}>
-            Save
           </Button>
         ]}
       >
-        <PollForm ref={childRef} poll={poll} />
+        <Form selectedPoll={poll} closeModal={closeEditModal} isEdit={true} />
       </Modal>
     </li>
   );

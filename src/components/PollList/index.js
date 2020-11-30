@@ -1,57 +1,60 @@
-import React, {
-  useState,
-  useEffect,
-  useContext,
-  forwardRef,
-  useRef,
-  useImperativeHandle
-} from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import Poll from "../Poll";
+import Header from "../Header";
 import { RootContext } from "../RootContext.js";
-import { Modal, Button } from "antd";
+import { Modal, Button, Layout } from "antd";
 import Login from "../Login";
-import PollForm from "../PollForm";
-import { Layout } from "antd";
-import "./style.css";
+import SignUp from "../SignUp";
+import Form from "../Form";
 
-const { Header, Footer, Sider, Content } = Layout;
+import "./style.css";
+import { PollContext } from "../RootContext";
+
+const { Content } = Layout;
 
 const App = () => {
   // States
-  const { authenticated, setAuthenticated } = useContext(RootContext);
+  const { user, setUser } = useContext(RootContext);
+
+  // Local State for handling Modals
   const [visibleLogin, setVisibleLogin] = useState(false);
   const [visiblePollForm, setVisiblePollForm] = useState(false);
+  const [visibleSignUpForm, setVisibleSignUpForm] = useState(false);
 
   // In order to gain access to the child component instance,
   // you need to assign it to a `ref`, so we call `useRef()` to get one
-  const childRef = useRef();
+  // const childRef = useRef();
 
+  // Modal Functionalities
   const showLoginModal = () => setVisibleLogin(true);
   const closeLoginModal = () => setVisibleLogin(false);
 
   const showPollFormModal = () => setVisiblePollForm(true);
   const closePollFormModal = () => setVisiblePollForm(false);
 
-  const poll1 = [
+  const showVisibleSignUpForm = () => setVisibleSignUpForm(true);
+  const closeVisibleSignUpForm = () => setVisibleSignUpForm(false);
+
+  const initialPolls = [
     {
       id: Date.now(),
       title: "Have you been crazy lately?",
       closed: false,
       choices: [
         {
+          id: Date.now() + "yes",
           value: "Yes",
-          count: 0,
-          position: 0
+          count: 0
         },
         {
+          id: Date.now() + "no",
           value: "No",
-          count: 0,
-          position: 1
+          count: 0
         },
         {
+          id: Date.now() + "wc",
           value: "Who cares",
-          count: 0,
-          position: 2
+          count: 0
         }
       ]
     },
@@ -61,123 +64,101 @@ const App = () => {
       closed: false,
       choices: [
         {
+          id: Date.now() + "yes",
           value: "Yes",
-          count: 0,
-          position: 0
+          count: 0
         },
         {
+          id: Date.now() + "no",
           value: "No",
-          count: 0,
-          position: 1
+          count: 0
         }
       ]
     }
   ];
-  const defaultPoll = JSON.parse(window.localStorage.getItem("polls")) || poll1;
 
-  const [polls, setPolls] = useState(defaultPoll);
+  const defaultPoll =
+    JSON.parse(window.localStorage.getItem("polls")) || initialPolls;
+
+  const pollReducer = (state, action) => {
+    switch (action.type) {
+      case "DELETE_POLL":
+        return state.filter(poll => poll.id !== action.id);
+      case "CREATE_POLL":
+        return [...state, action.newPoll];
+      case "CLOSE_POLL":
+        return state.map(poll =>
+          poll.id === action.id ? action.updatedPoll : poll
+        );
+      case "VOTE_POLL":
+        return state.map(poll =>
+          poll.id == action.id ? action.updatedPoll : poll
+        );
+      case "EDIT_POLL":
+        debugger;
+        return state.map(poll =>
+          poll.id === action.id ? action.updatedPoll : poll
+        );
+      default:
+        return state;
+    }
+  };
+
+  const [polls, dispatch] = useReducer(pollReducer, defaultPoll);
 
   useEffect(() => {
     window.localStorage.setItem("polls", JSON.stringify(polls));
   });
 
-  const incrementPollCount = (id, updatedPoll) => {
-    setPolls(polls.map(poll => (poll.id == id ? updatedPoll : poll)));
-  };
-
-  const deletePoll = id => {
-    setPolls(polls.filter(poll => poll.id !== id));
-  };
-
-  const loginUser = function() {
-    setAuthenticated(true);
-    closeLoginModal();
-  };
-
-  const closePoll = function(id, updatedPoll) {
-    setPolls(polls.map(poll => (poll.id === id ? updatedPoll : poll)));
-  };
-
-  const populatePollOptions = function(e) {
-    let newQues = childRef.current.populatePollOptions();
-    closePollFormModal();
-    setPolls([...polls, newQues]);
-  };
-
-  const editPoll = function(id, updatedPoll) {};
-
   return (
-    <React.Fragment>
-      <Layout>
-        <Header>
-          <div className="heading">Voting Polls</div>
-          {authenticated ? (
-            <div className="heading-menu">
-              <button
-                className="btn-primary"
-                onClick={() => setAuthenticated(false)}
-              >
-                Logout
-              </button>
-              <button className="btn-primary" onClick={showPollFormModal}>
-                Create a Poll
-              </button>
-            </div>
-          ) : (
-            <button className="btn-primary" onClick={showLoginModal}>
-              Login
-            </button>
-          )}
-        </Header>
-        <Content>
-          <ul className="poll-list">
-            {polls.map(poll => (
-              <Poll
-                poll={poll}
-                incrementPollCount={incrementPollCount}
-                deletePoll={deletePoll}
-                editPoll={editPoll}
-                closePoll={closePoll}
-              />
-            ))}
-          </ul>
-          {/* Login Modal */}
-          <Modal
-            visible={visibleLogin}
-            contentLabel="Login"
-            onCancel={closeLoginModal}
-            destroyOnClose={true}
-            footer={[
-              <Button key="back" onClick={closeLoginModal}>
-                Cancel
-              </Button>,
-              <Button key="submit" type="primary" onClick={loginUser}>
-                Submit
-              </Button>
-            ]}
-          >
-            <Login />
-          </Modal>
-          {/* Create a Poll */}
-          <Modal
-            visible={visiblePollForm}
-            contentLabel="Create a Poll"
-            onCancel={closePollFormModal}
-            destroyOnClose={true}
-            footer={[
-              <Button key="back" onClick={closePollFormModal}>
-                Cancel
-              </Button>,
-              <Button key="submit" type="primary" onClick={populatePollOptions}>
-                Create
-              </Button>
-            ]}
-          >
-            <PollForm ref={childRef} />
-          </Modal>
-        </Content>
-      </Layout>
-    </React.Fragment>
+    <PollContext.Provider value={{ polls, dispatch }}>
+      <React.Fragment>
+        <Layout>
+          <Header
+            showLoginModal={showLoginModal}
+            showPollFormModal={showPollFormModal}
+            showVisibleSignUpForm={showVisibleSignUpForm}
+          />
+          <Content>
+            <ul className="poll-list">
+              {polls.map(poll => (
+                <Poll poll={poll} />
+              ))}
+            </ul>
+            {/* Login Modal */}
+            <Modal
+              visible={visibleLogin}
+              contentLabel="Login"
+              onCancel={closeLoginModal}
+              destroyOnClose={true}
+              footer={[]}
+            >
+              <Login closeModal={closeLoginModal} />
+            </Modal>
+            {/* Create a Poll */}
+            <Modal
+              visible={visiblePollForm}
+              contentLabel="Create a Poll"
+              onCancel={closePollFormModal}
+              destroyOnClose={true}
+              footer={[]}
+            >
+              <Form closeModal={closePollFormModal} />
+            </Modal>
+            {/* Sign Up modal */}
+            <Modal
+              visible={visibleSignUpForm}
+              contentLabel="Login"
+              onCancel={closeVisibleSignUpForm}
+              destroyOnClose={true}
+              footer={[]}
+            >
+              <SignUp closeModal={closeVisibleSignUpForm} />
+            </Modal>
+          </Content>
+        </Layout>
+      </React.Fragment>
+    </PollContext.Provider>
   );
 };
 

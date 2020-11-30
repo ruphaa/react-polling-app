@@ -1,14 +1,20 @@
 import React, { useState, useContext } from "react";
 import ProgressBar from "../ProgressBar";
 import "./style.css";
+import { PollContext } from "../RootContext.js";
 
-const App = ({ poll, incrementPollCount }) => {
+const App = ({ poll }) => {
+  const { dispatch } = useContext(PollContext);
   const [showProgress, setShowProgress] = useState(false);
 
   const incrementCounter = event => {
-    let position = event.currentTarget.dataset["id"];
-    poll["choices"][position].count++;
-    incrementPollCount(poll.id, poll);
+    let id = event.currentTarget.dataset["id"];
+    poll["choices"].forEach((item, i) => {
+      debugger;
+      if (item.id == id) item.count++;
+    });
+    // poll["choices"][id].count++;
+    dispatch({ type: "VOTE_POLL", id: poll.id, updatedPoll: poll });
     setShowProgress(true);
   };
 
@@ -21,7 +27,7 @@ const App = ({ poll, incrementPollCount }) => {
         <ul className="choices">
           {poll.choices.map(choice => (
             <li>
-              <span data-id={choice.position} onClick={incrementCounter}>
+              <span data-id={choice.id} onClick={incrementCounter}>
                 {choice.value}
               </span>
             </li>
